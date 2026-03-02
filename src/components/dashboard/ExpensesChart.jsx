@@ -1,55 +1,82 @@
 import React, { useState, useEffect } from 'react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { ArrowRight } from 'lucide-react';
-import axios from 'axios';
+import api from '../../utils/api';
 import { useAuth } from '../../contexts/AuthContext';
 
-const ExpensesChart = () => {
+const ExpensesChart = ({ transactions }) => {
     const [data, setData] = useState([]);
     const [total, setTotal] = useState(0);
-    const { currentUser } = useAuth();
 
     useEffect(() => {
-        // Generate placeholder data for now until we connect the full backend flow
-        const placeholderData = [
-            { name: 'Oct', amount: 300 },
-            { name: 'Nov', amount: 500 },
-            { name: 'Dec', amount: 450 },
-            { name: 'Jan', amount: 600 },
-            { name: 'Feb', amount: 400 },
-            { name: 'Mar', amount: 800 },
-        ];
-        setData(placeholderData);
-        setTotal(placeholderData.reduce((sum, item) => sum + item.amount, 0));
-    }, []);
+        // Build data from real transactions or show sample
+        const months = ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'];
+        const now = new Date();
+
+        if (transactions && transactions.length > 0) {
+            const monthlyData = {};
+            months.forEach(m => { monthlyData[m] = 0; });
+
+            transactions.forEach(tx => {
+                if (tx.type === 'Expense' || tx.type === 'Atm Withdrawal') {
+                    const monthName = new Date(tx.date).toLocaleString('default', { month: 'short' });
+                    if (monthlyData[monthName] !== undefined) {
+                        monthlyData[monthName] += tx.amount;
+                    }
+                }
+            });
+
+            const builtData = months.map(m => ({ name: m, amount: monthlyData[m] || 0 }));
+            setData(builtData);
+            setTotal(builtData.reduce((sum, d) => sum + d.amount, 0));
+        } else {
+            // Sample data
+            const sample = [300, 500, 450, 600, 400, 800];
+            const builtData = months.map((m, i) => ({ name: m, amount: sample[i] }));
+            setData(builtData);
+            setTotal(builtData.reduce((sum, d) => sum + d.amount, 0));
+        }
+    }, [transactions]);
+
+    const CustomTooltip = ({ active, payload, label }) => {
+        if (active && payload && payload.length) {
+            return (
+                <div style={{ background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '10px', padding: '0.5rem 0.85rem', color: 'white' }}>
+                    <p style={{ margin: 0, fontWeight: 600 }}>{label}</p>
+                    <p style={{ margin: 0, fontSize: '0.9rem' }}>₹ {payload[0].value.toLocaleString()}</p>
+                </div>
+            );
+        }
+        return null;
+    };
 
     return (
         <div className="dash-card expenses-chart-card">
-            <div className="dash-card-header">
-                <h2 className="dash-card-title">Expenses</h2>
-                <button className="icon-btn"><ArrowRight size={20} color="#a0a0a0" /></button>
+            <div className="dash-card-header" style={{ marginBottom: '0.5rem' }}>
+                <h2 className="dash-card-title">Monthly Expenses</h2>
+                <button className="icon-btn" style={{ background: 'rgba(255,255,255,0.15)' }}>
+                    <ArrowRight size={18} color="white" />
+                </button>
             </div>
 
             <div className="expense-total">
-                <span className="currency">₹</span> {total.toLocaleString()}
-                <div className="expense-month">March 2026</div>
+                <span className="currency">₹</span> {total.toLocaleString('en-IN')}
             </div>
+            <div className="expense-month">Last 6 months total</div>
 
-            <div className="chart-container" style={{ height: '250px', marginTop: '1.5rem', background: 'linear-gradient(180deg, #7c3aed 0%, #5b21b6 100%)', borderRadius: '15px', padding: '1rem 0' }}>
+            <div style={{ height: '200px', marginTop: '1.5rem' }}>
                 <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                    <AreaChart data={data} margin={{ top: 5, right: 5, left: -30, bottom: 0 }}>
                         <defs>
-                            <linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#ffffff" stopOpacity={0.3} />
+                            <linearGradient id="expGrad" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="5%" stopColor="#ffffff" stopOpacity={0.4} />
                                 <stop offset="95%" stopColor="#ffffff" stopOpacity={0} />
                             </linearGradient>
                         </defs>
-                        <XAxis dataKey="name" stroke="#cbd5e1" fontSize={12} tickLine={false} axisLine={false} />
-                        <Tooltip
-                            contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '8px', color: '#fff' }}
-                            itemStyle={{ color: '#fff' }}
-                        />
-                        <Area type="monotone" dataKey="amount" stroke="#ffffff" strokeWidth={2} fillOpacity={1} fill="url(#colorAmount)" />
+                        <XAxis dataKey="name" stroke="rgba(255,255,255,0.5)" fontSize={12} tickLine={false} axisLine={false} />
+                        <YAxis stroke="rgba(255,255,255,0.3)" fontSize={11} tickLine={false} axisLine={false} />
+                        <Tooltip content={<CustomTooltip />} />
+                        <Area type="monotone" dataKey="amount" stroke="#ffffff" strokeWidth={2.5} fillOpacity={1} fill="url(#expGrad)" dot={false} />
                     </AreaChart>
                 </ResponsiveContainer>
             </div>
