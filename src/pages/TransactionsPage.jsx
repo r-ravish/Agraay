@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Filter, Trash2, TrendingDown, TrendingUp, ArrowUpDown } from 'lucide-react';
-import api from '../../utils/api';
-import { useAuth } from '../../contexts/AuthContext';
+import api from '../utils/api';
+import { useAuth } from '../contexts/AuthContext';
 
 const typeColors = {
     'Expense': { bg: '#fef2f2', text: '#ef4444', icon: <TrendingDown size={16} /> },

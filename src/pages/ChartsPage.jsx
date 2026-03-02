@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, AreaChart, Area, Legend } from 'recharts';
 import { TrendingUp, TrendingDown, Calendar } from 'lucide-react';
-import api from '../../utils/api';
-import { useAuth } from '../../contexts/AuthContext';
+import api from '../utils/api';
+import { useAuth } from '../contexts/AuthContext';
 
 const COLORS = ['#4f46e5', '#7c3aed', '#a855f7', '#ec4899', '#f43f5e', '#f59e0b', '#10b981', '#06b6d4'];
 

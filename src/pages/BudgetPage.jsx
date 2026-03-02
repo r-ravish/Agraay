@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit3, Trash2, Target } from 'lucide-react';
-import api from '../../utils/api';
-import { useAuth } from '../../contexts/AuthContext';
+import api from '../utils/api';
+import { useAuth } from '../contexts/AuthContext';
 
 const DEFAULT_BUDGETS = [
     { id: 1, category: 'Groceries', limit: 5000, color: '#10b981' },

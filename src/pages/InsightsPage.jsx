@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { TrendingUp, TrendingDown, Zap, Target, AlertTriangle, CheckCircle, ArrowRight } from 'lucide-react';
-import api from '../../utils/api';
-import { useAuth } from '../../contexts/AuthContext';
+import api from '../utils/api';
+import { useAuth } from '../contexts/AuthContext';
 
 const InsightsPage = () => {
     const { currentUser } = useAuth();
