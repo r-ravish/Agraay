@@ -1,74 +1,86 @@
 import React from 'react';
-import { ArrowRight, Wallet, Building2, Clock, Upload, Cloud, Users, PieChart } from 'lucide-react';
+import { PieChart, Pie, Cell } from 'recharts';
+import { ArrowRight, Clock } from 'lucide-react';
+
+const COLORS = ['#4f46e5', '#ef4444', '#10b981'];
 
 const SummaryCards = ({ transactions }) => {
-    const cashIn = transactions ? transactions.filter(t => t.type === 'Income' || t.type === 'Cash Received' || t.type === 'Cashback' || t.type === 'Refund').reduce((s, t) => s + t.amount, 0) : 0;
-    const totalExpenses = transactions ? transactions.filter(t => t.type === 'Expense' || t.type === 'Atm Withdrawal').reduce((s, t) => s + t.amount, 0) : 0;
+    const cashIn = transactions ? transactions.filter(t => ['Income', 'Cash Received', 'Cashback', 'Refund'].includes(t.type)).reduce((s, t) => s + t.amount, 0) : 0;
+    const totalExpenses = transactions ? transactions.filter(t => ['Expense', 'Atm Withdrawal'].includes(t.type)).reduce((s, t) => s + t.amount, 0) : 0;
     const balance = cashIn - totalExpenses;
 
+    const pieData = [
+        { name: 'Net Balance', value: Math.abs(balance) || 1 },
+        { name: 'Expenses', value: totalExpenses || 1 },
+        { name: 'Income', value: cashIn || 1 },
+    ];
+
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
 
-            {/* Stats Row */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                <div className="stat-mini-card">
-                    <div>
-                        <div className="stat-mini-label">Cash In Hand</div>
-                        <div className="stat-mini-value">₹{cashIn.toLocaleString('en-IN')}</div>
+            {/* Insights Card with Donut */}
+            <div className="dash-card" style={{ animationDelay: '0.2s' }}>
+                <div className="dash-card-header" style={{ marginBottom: '0.5rem' }}>
+                    <h2 className="dash-card-title">Insights</h2>
+                </div>
+                <div style={{ fontSize: '0.78rem', color: '#9ca3af', marginBottom: '0.75rem' }}>AI analysis</div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+
+                    {/* Left: Cash In Hand */}
+                    <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: '0.78rem', color: '#9ca3af', marginBottom: '0.25rem' }}>Cash In Hand</div>
+                        <div style={{ fontSize: '1.75rem', fontWeight: 800, color: '#1e1b4b' }}>₹{cashIn.toLocaleString('en-IN')}</div>
                     </div>
-                    <div className="stat-mini-icon" style={{ background: 'rgba(16, 185, 129, 0.1)' }}>
-                        <Wallet size={20} color="#10b981" />
+
+                    {/* Right: Donut Chart */}
+                    <div style={{ position: 'relative', width: '120px', height: '120px' }}>
+                        <PieChart width={120} height={120}>
+                            <Pie data={pieData} cx={55} cy={55} innerRadius={35} outerRadius={52} paddingAngle={3} dataKey="value" startAngle={90} endAngle={-270}>
+                                {pieData.map((_, i) => <Cell key={i} fill={COLORS[i]} />)}
+                            </Pie>
+                        </PieChart>
                     </div>
                 </div>
-                <div className="stat-mini-card">
-                    <div>
-                        <div className="stat-mini-label">Expenses</div>
-                        <div className="stat-mini-value" style={{ color: '#ef4444' }}>₹{totalExpenses.toLocaleString('en-IN')}</div>
+
+                {/* Legend */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', marginTop: '0.75rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.75rem' }}>
+                        <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#4f46e5', display: 'inline-block' }}></span>
+                        <span style={{ color: '#6b7280' }}>Net Balance:</span>
+                        <span style={{ fontWeight: 700, color: '#1e1b4b' }}>₹ {Math.abs(balance).toLocaleString('en-IN')}</span>
                     </div>
-                    <div className="stat-mini-icon" style={{ background: 'rgba(239, 68, 68, 0.1)' }}>
-                        <PieChart size={20} color="#ef4444" />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.75rem' }}>
+                        <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#ef4444', display: 'inline-block' }}></span>
+                        <span style={{ color: '#6b7280' }}>Expenses:</span>
+                        <span style={{ fontWeight: 700, color: '#1e1b4b' }}>₹ {totalExpenses.toLocaleString('en-IN')}</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.75rem' }}>
+                        <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981', display: 'inline-block' }}></span>
+                        <span style={{ color: '#6b7280' }}>Income:</span>
+                        <span style={{ fontWeight: 700, color: '#1e1b4b' }}>₹ {cashIn.toLocaleString('en-IN')}</span>
                     </div>
                 </div>
-            </div>
 
-            {/* Net Balance */}
-            <div className="dash-card" style={{ background: balance >= 0 ? 'linear-gradient(135deg, #10b981, #059669)' : 'linear-gradient(135deg, #ef4444, #dc2626)', border: 'none', color: 'white' }}>
-                <div style={{ fontSize: '0.85rem', opacity: 0.8, marginBottom: '0.5rem', fontWeight: 500 }}>Net Balance</div>
-                <div style={{ fontSize: '2rem', fontWeight: 800 }}>₹{Math.abs(balance).toLocaleString('en-IN')}</div>
-                <div style={{ fontSize: '0.8rem', opacity: 0.7, marginTop: '0.25rem' }}>{balance >= 0 ? '↑ You\'re saving well!' : '↓ Expenses exceed income'}</div>
+                {balance < 0 && (
+                    <div style={{ fontSize: '0.75rem', color: '#ef4444', fontWeight: 600, marginTop: '0.5rem' }}>• Expenses exceed income</div>
+                )}
             </div>
 
             {/* Bills Due */}
-            <div className="dash-card">
+            <div className="dash-card" style={{ animationDelay: '0.35s' }}>
                 <div className="dash-card-header">
                     <h2 className="dash-card-title">Bills Due</h2>
-                    <button className="icon-btn"><ArrowRight size={18} color="#6b7280" /></button>
+                    <button className="icon-btn"><ArrowRight size={16} color="#6b7280" /></button>
                 </div>
-                <div style={{ textAlign: 'center', padding: '1.5rem 0', color: '#9ca3af' }}>
-                    <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'rgba(99,102,241,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 0.75rem' }}>
-                        <Clock size={24} color="#6366f1" />
+                <div style={{ textAlign: 'center', padding: '1rem 0', color: '#9ca3af' }}>
+                    <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: 'rgba(99,102,241,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 0.6rem' }}>
+                        <Clock size={22} color="#6366f1" />
                     </div>
-                    <p style={{ margin: '0 0 1rem', fontSize: '0.85rem' }}>No bills added yet</p>
-                    <button style={{ background: 'rgba(99,102,241,0.08)', color: '#6366f1', border: '1px solid rgba(99,102,241,0.2)', padding: '0.6rem 1.2rem', borderRadius: '10px', width: '100%', cursor: 'pointer', fontWeight: 600, fontSize: '0.87rem' }}>
+                    <p style={{ margin: '0 0 0.75rem', fontSize: '0.82rem' }}>No bills added yet</p>
+                    <button style={{ background: '#4f46e5', color: 'white', border: 'none', padding: '0.55rem 1rem', borderRadius: '8px', width: '100%', cursor: 'pointer', fontWeight: 600, fontSize: '0.82rem', fontFamily: 'inherit' }}>
                         + Add Bill
                     </button>
-                </div>
-            </div>
-
-            {/* Control Center */}
-            <div className="dash-card">
-                <div className="dash-card-header">
-                    <h2 className="dash-card-title">Control Center</h2>
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.75rem', marginTop: '0.5rem' }}>
-                    {[{ icon: <Upload size={18} />, label: 'Import', color: '#6366f1' }, { icon: <Cloud size={18} />, label: 'Backup', color: '#8b5cf6' }, { icon: <Users size={18} />, label: 'Family', color: '#10b981' }].map(item => (
-                        <div key={item.label} style={{ textAlign: 'center' }}>
-                            <button style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'rgba(99,102,241,0.07)', border: '1px solid rgba(99,102,241,0.12)', color: item.color, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 0.5rem', cursor: 'pointer', transition: 'all 0.2s' }}>
-                                {item.icon}
-                            </button>
-                            <span style={{ fontSize: '0.75rem', color: '#6b7280', fontWeight: 500 }}>{item.label}</span>
-                        </div>
-                    ))}
                 </div>
             </div>
 
