@@ -23,8 +23,9 @@
 .dashboard-layout {
     display: flex;
     min-height: 100vh;
-    background-color: var(--dash-bg);
-    font-family: 'Inter', 'Segoe UI', sans-serif;
+    background-color: #f0f4ff;
+    font-family: 'Outfit', 'Inter', 'Segoe UI', sans-serif;
+    color: #111827;
 }
 
 /* ==========================================

@@ -1,54 +1,47 @@
 import React, { useState, useEffect } from 'react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { ArrowRight } from 'lucide-react';
-import api from '../../utils/api';
-import { useAuth } from '../../contexts/AuthContext';
+
+const MONTHS = ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'];
+
+const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+        return (
+            <div style={{ background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.25)', borderRadius: '10px', padding: '0.5rem 0.85rem', color: 'white' }}>
+                <p style={{ margin: 0, fontWeight: 600, fontSize: '0.85rem' }}>{label}</p>
+                <p style={{ margin: 0, fontSize: '1rem', fontWeight: 700 }}>₹ {payload[0].value.toLocaleString('en-IN')}</p>
+            </div>
+        );
+    }
+    return null;
+};
 
 const ExpensesChart = ({ transactions }) => {
-    const [data, setData] = useState([]);
+    const [data, setData] = useState(MONTHS.map(m => ({ name: m, amount: 0 })));
     const [total, setTotal] = useState(0);
 
     useEffect(() => {
-        // Build data from real transactions or show sample
-        const months = ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'];
-        const now = new Date();
-
         if (transactions && transactions.length > 0) {
-            const monthlyData = {};
-            months.forEach(m => { monthlyData[m] = 0; });
+            const monthlyTotals = {};
+            MONTHS.forEach(m => { monthlyTotals[m] = 0; });
 
             transactions.forEach(tx => {
-                if (tx.type === 'Expense' || tx.type === 'Atm Withdrawal') {
+                if (['Expense', 'Atm Withdrawal'].includes(tx.type)) {
                     const monthName = new Date(tx.date).toLocaleString('default', { month: 'short' });
-                    if (monthlyData[monthName] !== undefined) {
-                        monthlyData[monthName] += tx.amount;
+                    if (monthlyTotals[monthName] !== undefined) {
+                        monthlyTotals[monthName] += tx.amount;
                     }
                 }
             });
 
-            const builtData = months.map(m => ({ name: m, amount: monthlyData[m] || 0 }));
+            const builtData = MONTHS.map(m => ({ name: m, amount: monthlyTotals[m] }));
             setData(builtData);
             setTotal(builtData.reduce((sum, d) => sum + d.amount, 0));
         } else {
-            // Sample data
-            const sample = [300, 500, 450, 600, 400, 800];
-            const builtData = months.map((m, i) => ({ name: m, amount: sample[i] }));
-            setData(builtData);
-            setTotal(builtData.reduce((sum, d) => sum + d.amount, 0));
+            setData(MONTHS.map(m => ({ name: m, amount: 0 })));
+            setTotal(0);
         }
     }, [transactions]);
-
-    const CustomTooltip = ({ active, payload, label }) => {
-        if (active && payload && payload.length) {
-            return (
-                <div style={{ background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '10px', padding: '0.5rem 0.85rem', color: 'white' }}>
-                    <p style={{ margin: 0, fontWeight: 600 }}>{label}</p>
-                    <p style={{ margin: 0, fontSize: '0.9rem' }}>₹ {payload[0].value.toLocaleString()}</p>
-                </div>
-            );
-        }
-        return null;
-    };
 
     return (
         <div className="dash-card expenses-chart-card">
@@ -62,7 +55,7 @@ const ExpensesChart = ({ transactions }) => {
             <div className="expense-total">
                 <span className="currency">₹</span> {total.toLocaleString('en-IN')}
             </div>
-            <div className="expense-month">Last 6 months total</div>
+            <div className="expense-month">{total === 0 ? 'No expenses recorded yet' : 'Last 6 months total'}</div>
 
             <div style={{ height: '200px', marginTop: '1.5rem' }}>
                 <ResponsiveContainer width="100%" height="100%">
