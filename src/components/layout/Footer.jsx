@@ -61,7 +61,7 @@ const Footer = () => {
 
                 <div className="footer-bottom">
                     <p>
-                        Copyright &copy; {currentYear} Agraay Software by FRIENTEER SOFTWARE PRIVATE LIMITED. All rights reserved.
+                        Copyright &copy; {currentYear} Agraay Software by Agraay PRIVATE LIMITED. All rights reserved.
                     </p>
                     <p className="made-with-love">
                         Crafted with <Heart size={14} color="#ff4b4b" fill="#ff4b4b" /> for better financial futures.
