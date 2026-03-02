@@ -1,48 +1,57 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { Home, BarChart3, List, Wallet, LogOut, TrendingUp, Settings } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
-import { Home, PieChart, List, CreditCard, LogOut, Settings } from 'lucide-react';
-import Logo from '../common/Logo';
 
 const Sidebar = () => {
-    const { logout, currentUser } = useAuth();
+    const { currentUser, logout } = useAuth();
+    const navigate = useNavigate();
+
+    const handleLogout = async () => {
+        await logout();
+        navigate('/');
+    };
+
+    const initial = currentUser?.displayName?.charAt(0)?.toUpperCase() || currentUser?.email?.charAt(0)?.toUpperCase() || 'A';
 
     return (
         <aside className="dashboard-sidebar">
             <div className="sidebar-header">
-                <Logo width={80} />
+                <div className="sidebar-brand">Agraay</div>
+                <div className="sidebar-brand-sub">Finance Manager</div>
             </div>
 
             <nav className="sidebar-nav">
                 <NavLink to="/dashboard" end className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
-                    <Home size={20} />
-                    <span>Home</span>
+                    <Home size={20} /> Home
                 </NavLink>
                 <NavLink to="/dashboard/charts" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
-                    <PieChart size={20} />
-                    <span>Charts</span>
+                    <BarChart3 size={20} /> Charts
                 </NavLink>
                 <NavLink to="/dashboard/transactions" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
-                    <List size={20} />
-                    <span>List</span>
+                    <List size={20} /> Transactions
                 </NavLink>
                 <NavLink to="/dashboard/budget" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
-                    <CreditCard size={20} />
-                    <span>Budget</span>
+                    <Wallet size={20} /> Budget
+                </NavLink>
+                <NavLink to="/dashboard/insights" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
+                    <TrendingUp size={20} /> Insights
+                </NavLink>
+                <NavLink to="/dashboard/settings" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
+                    <Settings size={20} /> Settings
                 </NavLink>
             </nav>
 
             <div className="sidebar-footer">
                 <div className="user-profile">
-                    <div className="avatar">{currentUser?.displayName?.charAt(0) || 'U'}</div>
+                    <div className="avatar">{initial}</div>
                     <div className="user-details">
                         <span className="user-name">{currentUser?.displayName || 'User'}</span>
                         <span className="user-email">{currentUser?.email}</span>
                     </div>
                 </div>
-                <button className="sidebar-link logout-btn" onClick={() => logout()}>
-                    <LogOut size={20} />
-                    <span>Logout</span>
+                <button className="sidebar-link logout-btn" onClick={handleLogout}>
+                    <LogOut size={20} /> Logout
                 </button>
             </div>
         </aside>
