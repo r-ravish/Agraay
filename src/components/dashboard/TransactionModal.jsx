@@ -34,7 +34,6 @@ const TransactionModal = ({ onClose }) => {
         try {
             await api.post('/api/transactions', {
                 firebaseUid: currentUser.uid,
-                userId: currentUser.uid,
                 type,
                 account,
                 description: description.trim(),
