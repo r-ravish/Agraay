@@ -1,7 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
-const MONTHS = ['Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+// Dynamically compute the last 6 months from today
+const getLast6Months = () => {
+    const months = [];
+    const now = new Date();
+    for (let i = 5; i >= 0; i--) {
+        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        months.push({
+            key: `${d.getFullYear()}-${d.getMonth()}`,
+            label: d.toLocaleString('default', { month: 'short' }),
+            year: d.getFullYear(),
+            month: d.getMonth(),
+        });
+    }
+    return months;
+};
 
 const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
@@ -16,30 +30,29 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 const ExpensesChart = ({ transactions }) => {
-    const [data, setData] = useState(MONTHS.map(m => ({ name: m, amount: 0 })));
+    const [data, setData] = useState([]);
     const [total, setTotal] = useState(0);
 
     useEffect(() => {
-        if (transactions && transactions.length > 0) {
-            const monthlyTotals = {};
-            MONTHS.forEach(m => { monthlyTotals[m] = 0; });
+        const months = getLast6Months();
+        const monthlyTotals = {};
+        months.forEach(m => { monthlyTotals[m.key] = 0; });
 
+        if (transactions && transactions.length > 0) {
             transactions.forEach(tx => {
                 if (['Expense', 'Atm Withdrawal'].includes(tx.type)) {
-                    const monthName = new Date(tx.date).toLocaleString('default', { month: 'short' });
-                    if (monthlyTotals[monthName] !== undefined) {
-                        monthlyTotals[monthName] += tx.amount;
+                    const txDate = new Date(tx.date);
+                    const txKey = `${txDate.getFullYear()}-${txDate.getMonth()}`;
+                    if (monthlyTotals[txKey] !== undefined) {
+                        monthlyTotals[txKey] += tx.amount;
                     }
                 }
             });
-
-            const builtData = MONTHS.map(m => ({ name: m, amount: monthlyTotals[m] }));
-            setData(builtData);
-            setTotal(builtData.reduce((sum, d) => sum + d.amount, 0));
-        } else {
-            setData(MONTHS.map(m => ({ name: m, amount: 0 })));
-            setTotal(0);
         }
+
+        const builtData = months.map(m => ({ name: m.label, amount: monthlyTotals[m.key] }));
+        setData(builtData);
+        setTotal(builtData.reduce((sum, d) => sum + d.amount, 0));
     }, [transactions]);
 
     return (
@@ -53,19 +66,19 @@ const ExpensesChart = ({ transactions }) => {
                 <span style={{ fontSize: '0.78rem', color: '#9ca3af' }}>Last 6 months total</span>
             </div>
 
-            <div style={{ height: '180px', marginTop: '0.75rem' }}>
+            <div style={{ height: '200px', marginTop: '0.75rem' }}>
                 <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={data} margin={{ top: 5, right: 5, left: -25, bottom: 0 }}>
                         <defs>
                             <linearGradient id="expGrad" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#6366f1" stopOpacity={0.2} />
+                                <stop offset="5%" stopColor="#6366f1" stopOpacity={0.25} />
                                 <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
                             </linearGradient>
                         </defs>
-                        <XAxis dataKey="name" stroke="#d1d5db" fontSize={11} tickLine={false} axisLine={false} />
+                        <XAxis dataKey="name" stroke="#d1d5db" fontSize={12} tickLine={false} axisLine={false} />
                         <YAxis stroke="#d1d5db" fontSize={10} tickLine={false} axisLine={false} />
                         <Tooltip content={<CustomTooltip />} />
-                        <Area type="monotone" dataKey="amount" stroke="#6366f1" strokeWidth={2.5} fillOpacity={1} fill="url(#expGrad)" dot={{ fill: '#6366f1', r: 3, strokeWidth: 0 }} activeDot={{ r: 5, fill: '#6366f1' }} />
+                        <Area type="monotone" dataKey="amount" stroke="#6366f1" strokeWidth={2.5} fillOpacity={1} fill="url(#expGrad)" dot={{ fill: '#6366f1', r: 4, strokeWidth: 0 }} activeDot={{ r: 6, fill: '#6366f1' }} />
                     </AreaChart>
                 </ResponsiveContainer>
             </div>

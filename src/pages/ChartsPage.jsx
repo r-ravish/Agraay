@@ -9,7 +9,6 @@ const COLORS = ['#4f46e5', '#7c3aed', '#a855f7', '#ec4899', '#f43f5e', '#f59e0b'
 const ChartsPage = () => {
     const { currentUser } = useAuth();
     const [transactions, setTransactions] = useState([]);
-    const [period, setPeriod] = useState('month');
 
     useEffect(() => {
         if (currentUser) {
@@ -19,14 +18,14 @@ const ChartsPage = () => {
         }
     }, [currentUser]);
 
-    // Category breakdown
+    // Category breakdown by description
     const categoryMap = {};
     const incomeTotal = transactions.filter(t => ['Income', 'Cash Received', 'Cashback', 'Refund'].includes(t.type)).reduce((s, t) => s + t.amount, 0);
     const expenseTotal = transactions.filter(t => ['Expense', 'Atm Withdrawal'].includes(t.type)).reduce((s, t) => s + t.amount, 0);
 
     transactions.forEach(t => {
         if (['Expense', 'Atm Withdrawal'].includes(t.type)) {
-            const cat = t.account || 'Other';
+            const cat = t.description || t.account || 'Other';
             categoryMap[cat] = (categoryMap[cat] || 0) + t.amount;
         }
     });
@@ -36,27 +35,43 @@ const ChartsPage = () => {
         pieData.push({ name: 'No Data', value: 1 });
     }
 
-    // Monthly trend
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    // Dynamic last 12 months trend
+    const getLast12Months = () => {
+        const months = [];
+        const now = new Date();
+        for (let i = 11; i >= 0; i--) {
+            const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+            months.push({
+                key: `${d.getFullYear()}-${d.getMonth()}`,
+                label: d.toLocaleString('default', { month: 'short' }),
+                year: d.getFullYear(),
+                month: d.getMonth(),
+            });
+        }
+        return months;
+    };
+
+    const dynamicMonths = getLast12Months();
     const monthlyIncome = {};
     const monthlyExpense = {};
-    months.forEach(m => { monthlyIncome[m] = 0; monthlyExpense[m] = 0; });
+    dynamicMonths.forEach(m => { monthlyIncome[m.key] = 0; monthlyExpense[m.key] = 0; });
 
     transactions.forEach(t => {
-        const m = new Date(t.date).toLocaleString('default', { month: 'short' });
-        if (months.includes(m)) {
+        const txDate = new Date(t.date);
+        const txKey = `${txDate.getFullYear()}-${txDate.getMonth()}`;
+        if (monthlyIncome[txKey] !== undefined) {
             if (['Income', 'Cash Received', 'Cashback', 'Refund'].includes(t.type)) {
-                monthlyIncome[m] += t.amount;
+                monthlyIncome[txKey] += t.amount;
             } else {
-                monthlyExpense[m] += t.amount;
+                monthlyExpense[txKey] += t.amount;
             }
         }
     });
 
-    const trendData = months.map(m => ({
-        name: m,
-        income: monthlyIncome[m],
-        expense: monthlyExpense[m],
+    const trendData = dynamicMonths.map(m => ({
+        name: m.label,
+        income: monthlyIncome[m.key],
+        expense: monthlyExpense[m.key],
     }));
 
     // Daily spend (last 7 days)
@@ -123,11 +138,11 @@ const ChartsPage = () => {
             </div>
 
             {/* Charts Grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem', marginBottom: '1.25rem' }}>
 
-                {/* Pie Chart */}
+                {/* Pie Chart - by description */}
                 <div className="dash-card" style={{ animationDelay: '0.1s' }}>
-                    <h3 className="dash-card-title" style={{ marginBottom: '1rem' }}>Spending by Account</h3>
+                    <h3 className="dash-card-title" style={{ marginBottom: '1rem' }}>Spending by Category</h3>
                     <div style={{ height: '280px' }}>
                         <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
@@ -176,8 +191,8 @@ const ChartsPage = () => {
                             <YAxis stroke="#9ca3af" fontSize={11} tickLine={false} axisLine={false} />
                             <Tooltip content={<CustomTooltip />} />
                             <Legend />
-                            <Area type="monotone" dataKey="income" stroke="#10b981" strokeWidth={2.5} fill="url(#incGrad)" name="Income" />
-                            <Area type="monotone" dataKey="expense" stroke="#ef4444" strokeWidth={2.5} fill="url(#expGradChart)" name="Expense" />
+                            <Area type="monotone" dataKey="income" stroke="#10b981" strokeWidth={2.5} fill="url(#incGrad)" name="Income" dot={{ fill: '#10b981', r: 3 }} />
+                            <Area type="monotone" dataKey="expense" stroke="#ef4444" strokeWidth={2.5} fill="url(#expGradChart)" name="Expense" dot={{ fill: '#ef4444', r: 3 }} />
                         </AreaChart>
                     </ResponsiveContainer>
                 </div>
