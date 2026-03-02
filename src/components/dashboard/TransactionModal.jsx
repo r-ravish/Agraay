@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, ChevronDown, Check } from 'lucide-react';
-import axios from 'axios';
+import api from '../../utils/api';
 import { useAuth } from '../../contexts/AuthContext';
 
 const TransactionModal = ({ onClose }) => {
@@ -30,7 +30,7 @@ const TransactionModal = ({ onClose }) => {
 
         setLoading(true);
         try {
-            await axios.post('http://localhost:5000/api/transactions', {
+            await api.post('/api/transactions', {
                 firebaseUid: currentUser.uid,
                 userId: currentUser.uid, // simplified for now, usually needs mongo ObjectId mapping
                 type,

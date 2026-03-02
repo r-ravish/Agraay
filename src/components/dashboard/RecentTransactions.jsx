@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowRight, FileText, Plus } from 'lucide-react';
-import axios from 'axios';
+import api from '../../utils/api';
 import { useAuth } from '../../contexts/AuthContext';
 
 const RecentTransactions = ({ onOpenAddModal }) => {
@@ -11,7 +11,7 @@ const RecentTransactions = ({ onOpenAddModal }) => {
         const fetchTransactions = async () => {
             if (currentUser) {
                 try {
-                    const res = await axios.get(`http://localhost:5000/api/transactions?firebaseUid=${currentUser.uid}`);
+                    const res = await api.get(`/api/transactions?firebaseUid=${currentUser.uid}`);
                     setTransactions(res.data);
                 } catch (err) {
                     console.error("Failed to fetch transactions", err);

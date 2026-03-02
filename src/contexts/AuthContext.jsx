@@ -7,7 +7,7 @@ import {
     updateProfile
 } from 'firebase/auth';
 import { auth } from './firebase';
-import axios from 'axios';
+import api from '../utils/api';
 
 const AuthContext = createContext();
 
@@ -25,7 +25,7 @@ export function AuthProvider({ children }) {
 
         // Sync with backend
         try {
-            await axios.post('http://localhost:5000/api/auth/sync', {
+            await api.post('/api/auth/sync', {
                 uid: userCredential.user.uid,
                 email: userCredential.user.email,
                 displayName: displayName
@@ -52,7 +52,7 @@ export function AuthProvider({ children }) {
             // Ensure backend is synced on login
             if (user) {
                 try {
-                    await axios.post('http://localhost:5000/api/auth/sync', {
+                    await api.post('/api/auth/sync', {
                         uid: user.uid,
                         email: user.email,
                         displayName: user.displayName
