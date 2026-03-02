@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import Logo from '../common/Logo';
+import { useAuth } from '../../contexts/AuthContext';
 import './Navbar.css';
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     const location = useLocation();
+    const { currentUser } = useAuth();
 
     useEffect(() => {
         const handleScroll = () => {
@@ -48,7 +50,14 @@ const Navbar = () => {
                             {link.name}
                         </a>
                     ))}
-                    <a href="/#download" className="btn btn-primary nav-btn">Download Now</a>
+                    {currentUser ? (
+                        <Link to="/dashboard" className="btn btn-primary nav-btn">Dashboard</Link>
+                    ) : (
+                        <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                            <Link to="/login" className="btn btn-outline nav-btn">Log In</Link>
+                            <Link to="/signup" className="btn btn-primary nav-btn">Get Started</Link>
+                        </div>
+                    )}
                 </div>
 
                 {/* Mobile menu toggle */}
@@ -70,9 +79,14 @@ const Navbar = () => {
                             {link.name}
                         </a>
                     ))}
-                    <a href="/#download" className="btn btn-primary mobile-btn" onClick={closeMenu}>
-                        Download Now
-                    </a>
+                    {currentUser ? (
+                        <Link to="/dashboard" className="btn btn-primary mobile-btn" onClick={closeMenu}>Dashboard</Link>
+                    ) : (
+                        <>
+                            <Link to="/login" className="btn btn-outline mobile-btn" onClick={closeMenu}>Log In</Link>
+                            <Link to="/signup" className="btn btn-primary mobile-btn" onClick={closeMenu}>Get Started</Link>
+                        </>
+                    )}
                 </div>
             </div>
         </nav>
