@@ -107,32 +107,23 @@ ul {
   animation: fadeIn 0.8s ease forwards;
 }
 
-/* Logo Glow Animation */
-@keyframes logoGlow {
+/* Auth Page Background Animation */
+@keyframes bgGradientWave {
   0% {
-    box-shadow: 0 0 20px 5px rgba(82, 194, 201, 0.3);
-    background-color: rgba(163, 225, 229, 0.2);
+    background-position: 0% 50%;
   }
 
   50% {
-    box-shadow: 0 0 40px 15px rgba(82, 194, 201, 0.6);
-    background-color: rgba(163, 225, 229, 0.4);
+    background-position: 100% 50%;
   }
 
   100% {
-    box-shadow: 0 0 20px 5px rgba(82, 194, 201, 0.3);
-    background-color: rgba(163, 225, 229, 0.2);
+    background-position: 0% 50%;
   }
 }
 
-.logo-glow-bg {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
-  animation: logoGlow 3s infinite ease-in-out;
-  z-index: 0;
+.auth-page-bg {
+  background: linear-gradient(-45deg, var(--bg-light), #e6f7f8, #f0f7f4, #e2e8f0);
+  background-size: 400% 400%;
+  animation: bgGradientWave 15s ease infinite;
 }

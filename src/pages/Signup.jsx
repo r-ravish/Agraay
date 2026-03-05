@@ -33,15 +33,12 @@ const Signup = () => {
     }
 
     return (
-        <div className="page-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: 'var(--bg-light)' }}>
+        <div className="page-container auth-page-bg" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
             <div style={{ background: 'white', padding: '3rem', borderRadius: '20px', boxShadow: '0 10px 40px rgba(0,0,0,0.05)', width: '100%', maxWidth: '450px' }}>
                 <div style={{ textAlign: 'center', marginBottom: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <div style={{ position: 'relative', display: 'inline-flex', justifyContent: 'center', alignItems: 'center' }}>
-                        <div className="logo-glow-bg"></div>
-                        <Link to="/" style={{ position: 'relative', zIndex: 1, display: 'flex' }}><Logo width={100} /></Link>
-                    </div>
-                    <h2 style={{ color: 'var(--primary-dark)', marginTop: '1rem', fontSize: '1.8rem' }}>Get Started</h2>
-                    <p style={{ color: 'var(--text-muted)' }}>Create an account to track expenses</p>
+                    <Link to="/" style={{ display: 'flex' }}><Logo width={100} /></Link>
+                    <h2 style={{ color: 'var(--primary-dark)', marginTop: '0', fontSize: '1.8rem', textAlign: 'center' }}>Get Started</h2>
+                    <p style={{ color: 'var(--text-muted)', textAlign: 'center', marginBottom: '1.5rem' }}>Create an account to track expenses</p>
                 </div>
 
                 {error && <div style={{ background: '#fee2e2', color: '#b91c1c', padding: '1rem', borderRadius: '10px', marginBottom: '1.5rem', fontSize: '0.9rem' }}>{error}</div>}
