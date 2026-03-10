@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate, Link } from 'react-router-dom';
 import { Home, BarChart3, List, Wallet, LogOut, TrendingUp, Settings, LogIn } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -18,8 +18,10 @@ const Sidebar = () => {
         <aside className="dashboard-sidebar">
             <div className="sidebar-header">
                 <div>
-                    <div className="sidebar-brand">Agraay.</div>
-                    <div className="sidebar-brand-sub">Finance Manager</div>
+                    <Link to="/" style={{ textDecoration: 'none' }}>
+                        <div className="sidebar-brand">Agraay.</div>
+                        <div className="sidebar-brand-sub">Finance Manager</div>
+                    </Link>
                 </div>
                 <button onClick={handleLogout} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '6px', borderRadius: '8px', color: 'rgba(255,255,255,0.35)', transition: 'color 0.2s' }}
                     title="Logout">

@@ -27,8 +27,8 @@ const Login = () => {
     }
 
     return (
-        <div className="page-container auth-page-bg" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
-            <div style={{ background: 'white', padding: '3rem', borderRadius: '20px', boxShadow: '0 10px 40px rgba(0,0,0,0.05)', width: '100%', maxWidth: '450px' }}>
+        <div className="page-container auth-page-bg" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', paddingTop: '100px', paddingBottom: '2rem' }}>
+            <div style={{ background: 'white', padding: '3rem', borderRadius: '20px', boxShadow: '0 10px 40px rgba(0,0,0,0.05)', width: '100%', maxWidth: '450px', margin: 'auto' }}>
                 <div style={{ textAlign: 'center', marginBottom: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <Link to="/" style={{ display: 'flex' }}><Logo width={100} /></Link>
                     <h2 style={{ color: 'var(--primary-dark)', marginTop: '1rem', fontSize: '1.8rem' }}>Welcome Back</h2>
