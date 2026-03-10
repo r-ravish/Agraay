@@ -1,8 +1,12 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import './Home.css';
-import { ArrowRight, ShieldCheck, Smartphone, ChartPie, BellRing } from 'lucide-react';
+import { ArrowRight, ShieldCheck, Smartphone, ChartPie, BellRing, TrendingUp, Zap, BarChart3, Sparkles } from 'lucide-react';
 
 const Home = () => {
+    const { currentUser } = useAuth();
+
     return (
         <div className="home-page">
             {/* Hero Section */}
@@ -14,20 +18,31 @@ const Home = () => {
                             Master Your Money with <span className="text-gradient">AI Automation</span>
                         </h1>
                         <p className="hero-subtitle">
-                            Stop manually entering expenses. Agraay uses AI to automatically read your SMS and bank notifications, categorizing every transaction in seconds.
+                            Track, categorize, and analyze every expense effortlessly. Agraay uses AI to keep your finances organized in seconds.
                         </p>
                         <div className="hero-actions">
-                            <a href="#download" className="btn btn-primary btn-large">
-                                Download Now <ArrowRight size={20} className="ml-2" />
-                            </a>
+                            {currentUser ? (
+                                <Link to="/dashboard" className="btn btn-primary btn-large">
+                                    Dashboard <ArrowRight size={20} className="ml-2" />
+                                </Link>
+                            ) : (
+                                <>
+                                    <Link to="/signup" className="btn btn-primary btn-large">
+                                        Sign Up <ArrowRight size={20} className="ml-2" />
+                                    </Link>
+                                    <Link to="/login" className="btn btn-outline btn-large">
+                                        Log In
+                                    </Link>
+                                </>
+                            )}
                             <a href="#how" className="btn btn-outline btn-large">
                                 See How It Works
                             </a>
                         </div>
 
                         <div className="hero-trust">
-                            <div className="trust-item"><ShieldCheck size={18} /> Bank-Level Security</div>
-                            <div className="trust-item"><Smartphone size={18} /> SMS-Based Tracking</div>
+                            <div className="trust-item"><BarChart3 size={18} /> Smart Analytics</div>
+                            <div className="trust-item"><Sparkles size={18} /> Instant Insights</div>
                         </div>
                     </div>
 
@@ -72,14 +87,14 @@ const Home = () => {
                 <div className="container">
                     <div className="section-header">
                         <h2>Powerful Features</h2>
-                        <p>Experience a cutting-edge way to stay on top of your finances without manual effort.</p>
+                        <p>Experience a cutting-edge way to stay on top of your finances.</p>
                     </div>
 
                     <div className="features-grid">
                         <div className="feature-card">
                             <div className="feature-icon"><ChartPie size={32} /></div>
                             <h3>Automated Categorization</h3>
-                            <p>Categorizes your expenses and displays monthly trends using AI technology applied to SMS and notifications.</p>
+                            <p>Categorizes your expenses and displays monthly trends using AI technology.</p>
                         </div>
 
                         <div className="feature-card">
@@ -115,19 +130,12 @@ const Home = () => {
                                 <li>
                                     <div className="step-number">1</div>
                                     <div className="step-info">
-                                        <h4>Grant SMS Permission</h4>
-                                        <p>Agraay securely reads transaction alerts.</p>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div className="step-number">2</div>
-                                    <div className="step-info">
                                         <h4>AI Analysis</h4>
                                         <p>Our intelligent engine categorizes each transaction instantly.</p>
                                     </div>
                                 </li>
                                 <li>
-                                    <div className="step-number">3</div>
+                                    <div className="step-number">2</div>
                                     <div className="step-info">
                                         <h4>Visual Budgeting</h4>
                                         <p>View your beautiful, automatically generated expense reports.</p>
@@ -151,24 +159,73 @@ const Home = () => {
                 <div className="container">
                     <div className="section-header">
                         <h2>Simple, Transparent Pricing</h2>
-                        <p>FinArt is free to download and try for 5 days. We remain ad-free for everyone.</p>
+                        <p>Choose the plan that works best for you. Cancel anytime.</p>
                     </div>
 
-                    <div className="pricing-card">
-                        <div className="pricing-header">
-                            <h3>Agraay Premium</h3>
-                            <div className="price">Free 5-Day Trial</div>
-                            <p>Then nominal subscription based on your region.</p>
+                    <div className="pricing-grid">
+                        {/* First Month */}
+                        <div className="pricing-card">
+                            <div className="pricing-plan-badge">Starter</div>
+                            <div className="pricing-header">
+                                <h3>First Month</h3>
+                                <div className="price">₹50</div>
+                                <p>One-time commitment fee to get started.</p>
+                            </div>
+                            <ul className="pricing-features">
+                                <li><ShieldCheck size={20} color="var(--primary-light)" /> Full Access to All Features</li>
+                                <li><ShieldCheck size={20} color="var(--primary-light)" /> AI-Powered Categorization</li>
+                                <li><ShieldCheck size={20} color="var(--primary-light)" /> Smart Analytics Dashboard</li>
+                            </ul>
+                            <Link to="/signup" className="btn btn-primary btn-large">Get Started</Link>
                         </div>
-                        <ul className="pricing-features">
-                            <li><ShieldCheck size={20} color="var(--primary-light)" /> Ad-Free Experience</li>
-                            <li><ShieldCheck size={20} color="var(--primary-light)" /> Unlimited Automatic Tracking</li>
-                            <li><ShieldCheck size={20} color="var(--primary-light)" /> Smart Bill Reminders</li>
-                            <li><ShieldCheck size={20} color="var(--primary-light)" /> Local-First Privacy Mode</li>
-                            <li><ShieldCheck size={20} color="var(--primary-light)" /> Visual Monthly Trends</li>
-                        </ul>
-                        <a href="#download" className="btn btn-primary btn-large">Start Free Trial</a>
-                        <p className="pricing-note">Check the subscription page inside the app for local pricing details.</p>
+
+                        {/* Monthly */}
+                        <div className="pricing-card">
+                            <div className="pricing-plan-badge">Monthly</div>
+                            <div className="pricing-header">
+                                <h3>Monthly</h3>
+                                <div className="price">₹199<span className="pricing-period">/mo</span></div>
+                                <p>Billed monthly after the first month.</p>
+                            </div>
+                            <ul className="pricing-features">
+                                <li><ShieldCheck size={20} color="var(--primary-light)" /> Everything in Starter</li>
+                                <li><ShieldCheck size={20} color="var(--primary-light)" /> Ad-Free Experience</li>
+                                <li><ShieldCheck size={20} color="var(--primary-light)" /> Priority Support</li>
+                            </ul>
+                            <Link to="/signup" className="btn btn-outline btn-large">Subscribe</Link>
+                        </div>
+
+                        {/* Semi-Annual */}
+                        <div className="pricing-card pricing-card-popular">
+                            <div className="pricing-plan-badge popular">Most Popular</div>
+                            <div className="pricing-header">
+                                <h3>Semi-Annual</h3>
+                                <div className="price">₹1,099<span className="pricing-period">/6 mo</span></div>
+                                <p className="pricing-savings">~₹183/mo — Save 8%</p>
+                            </div>
+                            <ul className="pricing-features">
+                                <li><ShieldCheck size={20} color="var(--primary-light)" /> Everything in Monthly</li>
+                                <li><ShieldCheck size={20} color="var(--primary-light)" /> Visual Monthly Trends</li>
+                                <li><ShieldCheck size={20} color="var(--primary-light)" /> Budget Planner</li>
+                            </ul>
+                            <Link to="/signup" className="btn btn-primary btn-large">Subscribe</Link>
+                        </div>
+
+                        {/* Annual */}
+                        <div className="pricing-card">
+                            <div className="pricing-plan-badge">Best Value</div>
+                            <div className="pricing-header">
+                                <h3>Annual</h3>
+                                <div className="price">₹1,999<span className="pricing-period">/yr</span></div>
+                                <p className="pricing-savings">~₹167/mo — Save 16%</p>
+                            </div>
+                            <ul className="pricing-features">
+                                <li><ShieldCheck size={20} color="var(--primary-light)" /> Everything in Semi-Annual</li>
+                                <li><ShieldCheck size={20} color="var(--primary-light)" /> Early Access to New Features</li>
+                                <li><ShieldCheck size={20} color="var(--primary-light)" /> Dedicated Account Manager</li>
+                            </ul>
+                            <Link to="/signup" className="btn btn-primary btn-large">Subscribe</Link>
+                        </div>
                     </div>
                 </div>
             </section>

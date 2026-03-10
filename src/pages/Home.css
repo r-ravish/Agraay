@@ -469,17 +469,31 @@
     background-color: var(--bg-main);
 }
 
-.pricing-card {
-    max-width: 500px;
+.pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    max-width: 900px;
     margin: 0 auto;
+}
+
+.pricing-card {
     background: white;
     border-radius: 20px;
-    padding: 3rem;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
-    border: 1px solid rgba(82, 194, 201, 0.3);
+    padding: 2.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(82, 194, 201, 0.2);
     text-align: center;
     position: relative;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.pricing-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(82, 194, 201, 0.15);
 }
 
 .pricing-card::before {
@@ -488,14 +502,37 @@
     top: 0;
     left: 0;
     width: 100%;
-    height: 6px;
+    height: 5px;
     background: linear-gradient(90deg, var(--primary-dark), var(--primary-light));
 }
 
-.pricing-header h3 {
-    font-size: 1.5rem;
+.pricing-card-popular {
+    border: 2px solid var(--primary-light);
+    box-shadow: 0 15px 40px rgba(82, 194, 201, 0.18);
+}
+
+.pricing-plan-badge {
+    display: inline-block;
+    padding: 0.3rem 1rem;
+    background-color: rgba(82, 194, 201, 0.1);
     color: var(--primary-dark);
-    margin-bottom: 1rem;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 1.25rem;
+}
+
+.pricing-plan-badge.popular {
+    background-color: var(--primary-light);
+    color: white;
+}
+
+.pricing-header h3 {
+    font-size: 1.3rem;
+    color: var(--primary-dark);
+    margin-bottom: 0.75rem;
 }
 
 .pricing-header .price {
@@ -505,32 +542,47 @@
     margin-bottom: 0.5rem;
 }
 
+.pricing-period {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-muted);
+}
+
 .pricing-header p {
     color: var(--text-muted);
-    font-size: 0.95rem;
-    margin-bottom: 2rem;
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+}
+
+.pricing-savings {
+    color: var(--primary-light) !important;
+    font-weight: 600 !important;
+    font-size: 0.95rem !important;
 }
 
 .pricing-features {
     text-align: left;
-    margin-bottom: 2.5rem;
+    margin-bottom: 2rem;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 0.75rem;
+    flex-grow: 1;
 }
 
 .pricing-features li {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 0.75rem;
     color: var(--text-main);
     font-weight: 500;
+    font-size: 0.95rem;
 }
 
-.pricing-note {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    margin-top: 1.5rem;
+@media (max-width: 768px) {
+    .pricing-grid {
+        grid-template-columns: 1fr;
+        max-width: 400px;
+    }
 }
 
 /* Contact/Mail Section */
