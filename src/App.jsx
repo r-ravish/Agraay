@@ -12,6 +12,7 @@ import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
 import PrivateRoute from './components/common/PrivateRoute';
 import ScrollToTop from './components/common/ScrollToTop';
+import Chatbot from './components/common/Chatbot';
 import { AuthProvider } from './contexts/AuthContext';
 
 function AppContent() {
@@ -46,6 +47,7 @@ function AppContent() {
         </Routes>
       </main>
       {!isDashboard && <Footer />}
+      <Chatbot />
     </div>
   );
 }
